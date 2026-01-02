@@ -1,0 +1,228 @@
+<!DOCTYPE html><html lang="id"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Cek Kuota & Membership Circle</title>
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root{ --brand:#006fff; }
+    body{ background:#f7f9fc; }
+    .navbar{ background:var(--brand); }
+    .navbar-brand{ color:#fff!important; font-weight:700; }
+    .card{ border:0; border-radius:1rem; box-shadow:0 8px 22px rgba(0,0,0,.06); }
+    .btn-brand {
+      background: var(--brand);
+      border: 2px solid var(--brand) !important;
+      color: #fff;
+      transition: all 0.2s ease-in-out;
+    }
+    .btn-brand:hover { filter:brightness(.95); }
+    .btn-brand:focus,
+    .btn-brand:active,
+    .btn-brand:focus-visible {
+      outline: none !important;
+      border: 2px solid #0056d2 !important;
+      box-shadow: 0 0 0 0.25rem rgba(0,111,255,.3) !important;
+      color: #fff;
+    }
+    .muted{ color:#6b7280; }
+    .mini{ font-size:.9rem; }
+    .nav-tabs .nav-link.active{ color:var(--brand); font-weight:600; border-bottom-color: var(--brand); }
+    .nav-tabs .nav-link{ border:none; border-bottom:2px solid transparent; }
+    .progress { height: 24px; border-radius: 12px; overflow: hidden; }
+    .progress-bar { font-weight:600; font-size:.85rem; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <span class="navbar-brand">Circle Checker</span>
+    </div>
+  </nav>
+
+  <main class="container my-4">
+    <ul class="nav nav-tabs" role="tablist">
+      <li class="nav-item">
+        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#quota" type="button">Kuota Circle</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#member" type="button">Membership Circle</button>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+      <!-- Kuota -->
+      <div class="tab-pane fade show active" id="quota">
+        <div class="card p-3 p-md-4 mt-3">
+          <div class="mb-3">
+            <label class="form-label mini">MSISDN (tanpa +)</label>
+            <input id="msisdn" class="form-control form-control-lg" placeholder="628xxxxxxxx" inputmode="numeric">
+          </div>
+          <div class="d-grid">
+            <button id="btnCheck" class="btn btn-brand btn-lg">Cek Kuota</button>
+          </div>
+          <div id="state" class="mt-3 mini muted"></div>
+          <div id="result" class="mt-3 d-none">
+            <h5 class="mb-3">Hasil Kuota</h5>
+            <p><strong>MSISDN:</strong> <span id="r_msisdn"></span></p>
+            <div class="mb-3">
+              <div class="d-flex justify-content-between mb-1">
+                <span class="mini muted">Sisa Kuota</span>
+                <span id="r_remain"></span>
+              </div>
+              <div class="progress">
+                <div id="r_progress" class="progress-bar" style="width:0%">0%</div>
+              </div>
+            </div>
+            <ul class="list-group">
+              <li class="list-group-item"><strong>Total Kuota:</strong> <span id="r_alloc"></span></li>
+              <li class="list-group-item"><strong>Terpakai:</strong> <span id="r_used"></span></li>
+              <li class="list-group-item"><strong>Bergabung:</strong> <span id="r_join"></span></li>
+              <li class="list-group-item"><strong>Expired:</strong> <span id="r_exp"></span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Membership -->
+      <div class="tab-pane fade" id="member">
+        <div class="card p-3 p-md-4 mt-3">
+          <div class="mb-3">
+            <label class="form-label mini">MSISDN (tanpa +)</label>
+            <input id="msisdnMember" class="form-control form-control-lg" placeholder="628xxxxxxxx" inputmode="numeric">
+          </div>
+          <div class="d-grid">
+            <button id="btnMember" class="btn btn-brand btn-lg">Cek Status Membership</button>
+          </div>
+          <div id="stateMember" class="mt-3 mini muted"></div>
+          <div id="resultMember" class="mt-3 d-none">
+            <h5 class="mb-3">Status Membership</h5>
+            <p><strong>MSISDN:</strong> <span id="m_msisdn"></span></p>
+            <p><strong>Status:</strong> <span id="m_status"></span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="text-center mt-3 mini muted">© CIRCELCUANMV 2025</p>
+  </main>
+
+<script src="js/bootstrap.bundle.min.js"></script>
+<script>
+(function(){
+  const QUOTA_ENDPOINT = (msisdn) => `https://leonskennedy.my.id/cekcircle/cek_kuota.php?msisdn=${encodeURIComponent(msisdn)}`;
+  const MEMBERSHIP_ENDPOINT = (msisdn) => `https://leonskennedy.my.id/cekcircle/cek_membership.php?msisdn=${encodeURIComponent(msisdn)}`;
+
+  // ========== Kuota ==========
+  const msisdn = document.getElementById('msisdn');
+  const btnCheck = document.getElementById('btnCheck');
+  const state = document.getElementById('state');
+  const result = document.getElementById('result');
+
+  async function fetchQuota(msisdnVal){
+    state.textContent = 'Mengambil data kuota...';
+    result.classList.add('d-none');
+    try {
+      const res = await fetch(QUOTA_ENDPOINT(msisdnVal));
+      const data = await res.json();
+      //if (!data.ok) throw new Error(data.error || 'Gagal');
+      
+      if (!data.ok) {
+      state.textContent = ''; // kosongkan status kecil
+      result.classList.add('d-none');
+    
+      // hapus error lama kalau ada
+      const oldBox = document.getElementById('errorBox');
+      if (oldBox) oldBox.remove();
+    
+      // bikin alert box
+      const errorBox = document.createElement('div');
+      errorBox.className = 'alert alert-danger mt-3';
+      errorBox.id = 'errorBox';
+      errorBox.innerHTML = data.error; // pakai innerHTML supaya <br> dan <img> tampil
+    
+      state.parentNode.appendChild(errorBox);
+      return;
+    }
+
+      const q = data.quota;
+      const lc = data.lifecycle;
+
+      // pakai allocation.label kalau ada
+      const allocLabel = q.allocation.label || (q.allocation.gb + ' GB');
+
+      document.getElementById('r_msisdn').textContent = data.msisdn;
+      document.getElementById('r_alloc').textContent  = allocLabel;
+      document.getElementById('r_used').textContent   = q.used.gb + ' GB ('+q.usage_pct+'%)';
+      document.getElementById('r_remain').textContent = q.remaining.gb + ' GB';
+      document.getElementById('r_join').textContent   = lc.joined;
+      document.getElementById('r_exp').textContent    = lc.expires;
+
+      // progress bar
+      const bar = document.getElementById('r_progress');
+      bar.style.width = q.usage_pct + '%';
+      bar.textContent = q.usage_pct + '%';
+
+      // dinamis warna
+      const remainPct = 100 - q.usage_pct;
+      bar.classList.remove('bg-success','bg-warning','bg-danger');
+      if (remainPct > 50) {
+        bar.classList.add('bg-success');
+      } else if (remainPct > 20) {
+        bar.classList.add('bg-warning');
+      } else {
+        bar.classList.add('bg-danger');
+      }
+
+      state.textContent = '';
+      result.classList.remove('d-none');
+    } catch(e){
+      state.textContent = 'Error: '+e.message;
+    }
+  }
+
+  btnCheck.addEventListener('click', ()=> {
+    const v = msisdn.value.trim();
+    if (!/^62\d{6,14}$/.test(v)){
+      state.textContent = 'Masukkan MSISDN valid (diawali 62).';
+      return;
+    }
+    fetchQuota(v);
+  });
+
+  // ========== Membership ==========
+  const msisdnMember = document.getElementById('msisdnMember');
+  const btnMember = document.getElementById('btnMember');
+  const stateMember = document.getElementById('stateMember');
+  const resultMember = document.getElementById('resultMember');
+
+  async function fetchMembership(msisdnVal){
+    stateMember.textContent = 'Mengambil data membership...';
+    resultMember.classList.add('d-none');
+    try {
+      const res = await fetch(MEMBERSHIP_ENDPOINT(msisdnVal));
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || 'Gagal');
+
+      document.getElementById('m_msisdn').textContent = data.msisdn;
+      document.getElementById('m_status').textContent = data.membership.status_text;
+      document.getElementById('m_status').style.color = data.membership.status_color;
+
+      stateMember.textContent = '';
+      resultMember.classList.remove('d-none');
+    } catch(e){
+      stateMember.textContent = 'Error: '+e.message;
+    }
+  }
+
+  btnMember.addEventListener('click', ()=> {
+    const v = msisdnMember.value.trim();
+    if (!/^62\d{6,14}$/.test(v)){
+      stateMember.textContent = 'Masukkan MSISDN valid (diawali 62).';
+      return;
+    }
+    fetchMembership(v);
+  });
+})();
+</script>
+
+</body></html>
