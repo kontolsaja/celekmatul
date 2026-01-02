@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="id"><head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Cek Kuota & Membership Circle</title>
+  <title>Cek Circle</title>
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <style>
     :root{ --brand:#006fff; }
@@ -35,7 +35,7 @@
 <body>
   <nav class="navbar">
     <div class="container">
-      <span class="navbar-brand">Circle Checker</span>
+      <span class="navbar-brand">pengecekan semua circle</span>
     </div>
   </nav>
 
@@ -45,7 +45,7 @@
         <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#quota" type="button">Kuota Circle</button>
       </li>
       <li class="nav-item">
-        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#member" type="button">Membership Circle</button>
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#member" type="button">cek status Circle</button>
       </li>
     </ul>
 
@@ -54,7 +54,7 @@
       <div class="tab-pane fade show active" id="quota">
         <div class="card p-3 p-md-4 mt-3">
           <div class="mb-3">
-            <label class="form-label mini">MSISDN (tanpa +)</label>
+            <label class="form-label mini">masukan nomer (tanpa -/+)</label>
             <input id="msisdn" class="form-control form-control-lg" placeholder="628xxxxxxxx" inputmode="numeric">
           </div>
           <div class="d-grid">
@@ -63,7 +63,7 @@
           <div id="state" class="mt-3 mini muted"></div>
           <div id="result" class="mt-3 d-none">
             <h5 class="mb-3">Hasil Kuota</h5>
-            <p><strong>MSISDN:</strong> <span id="r_msisdn"></span></p>
+            <p><strong>nomer:</strong> <span id="r_msisdn"></span></p>
             <div class="mb-3">
               <div class="d-flex justify-content-between mb-1">
                 <span class="mini muted">Sisa Kuota</span>
@@ -87,23 +87,23 @@
       <div class="tab-pane fade" id="member">
         <div class="card p-3 p-md-4 mt-3">
           <div class="mb-3">
-            <label class="form-label mini">MSISDN (tanpa +)</label>
+            <label class="form-label mini">masukan nomer (tanpa -/+)</label>
             <input id="msisdnMember" class="form-control form-control-lg" placeholder="628xxxxxxxx" inputmode="numeric">
           </div>
           <div class="d-grid">
-            <button id="btnMember" class="btn btn-brand btn-lg">Cek Status Membership</button>
+            <button id="btnMember" class="btn btn-brand btn-lg">Cek Status circle</button>
           </div>
           <div id="stateMember" class="mt-3 mini muted"></div>
           <div id="resultMember" class="mt-3 d-none">
-            <h5 class="mb-3">Status Membership</h5>
-            <p><strong>MSISDN:</strong> <span id="m_msisdn"></span></p>
+            <h5 class="mb-3">Status circle</h5>
+            <p><strong>nomer:</strong> <span id="m_msisdn"></span></p>
             <p><strong>Status:</strong> <span id="m_status"></span></p>
           </div>
         </div>
       </div>
     </div>
 
-    <p class="text-center mt-3 mini muted">© CIRCELCUANMV 2025</p>
+    <p class="text-center mt-3 mini muted">📡lintas paket</p>
   </main>
 
 <script src="js/bootstrap.bundle.min.js"></script>
