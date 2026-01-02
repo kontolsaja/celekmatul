@@ -41,9 +41,13 @@
 
   <main class="container my-4">
     <ul class="nav nav-tabs" role="tablist">
-      <li class="nav-item">
-        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#quota" type="button">Kuota Circle</button>
-      </li>
+<div class="card p-3 p-md-4 mb-3">
+  <label class="form-label mini">Masukan nomer (tanpa -/+)</label>
+  <input id="msisdnGlobal"
+         class="form-control form-control-lg"
+         placeholder="628xxxxxxxx"
+         inputmode="numeric">
+</div>
       <li class="nav-item">
         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#member" type="button">cek status circle</button>
       </li>
@@ -52,11 +56,6 @@
     <div class="tab-content">
       <!-- Kuota -->
       <div class="tab-pane fade show active" id="quota">
-        <div class="card p-3 p-md-4 mt-3">
-          <div class="mb-3">
-            <label class="form-label mini">masukan nomer (tanpa -/+)</label>
-            <input id="msisdn" class="form-control form-control-lg" placeholder="628xxxxxxxx" inputmode="numeric">
-          </div>
           <div class="d-grid">
             <button id="btnCheck" class="btn btn-brand btn-lg">Cek Kuota</button>
           </div>
@@ -85,11 +84,6 @@
 
       <!-- Membership -->
       <div class="tab-pane fade" id="member">
-        <div class="card p-3 p-md-4 mt-3">
-          <div class="mb-3">
-            <label class="form-label mini">masukan nomer (tanpa -/+)</label>
-            <input id="msisdnMember" class="form-control form-control-lg" placeholder="628xxxxxxxx" inputmode="numeric">
-          </div>
           <div class="d-grid">
             <button id="btnMember" class="btn btn-brand btn-lg">Cek status circle</button>
           </div>
